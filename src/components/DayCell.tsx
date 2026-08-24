@@ -1,6 +1,6 @@
 interface DayCellProps {
   date: string;
-  completionRatio: number; // 0 to 1
+  completionRatio: number;
   isToday?: boolean;
   onClick?: () => void;
 }
