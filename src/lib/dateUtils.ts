@@ -5,7 +5,7 @@ export function getMonthWeeks(year: number, month: number): string[][] {
   const weeks: string[][] = [];
   let currentWeek: string[] = [];
 
-  const startPad = firstDay.getDay(); 
+  const startPad = firstDay.getDay();
   for (let i = 0; i < startPad; i++) {
     currentWeek.push("");
   }
@@ -33,5 +33,23 @@ export function toISODate(date: Date): string {
 }
 
 export function formatWeekLabel(weekIndex: number): string {
-  return `Wk ${weekIndex + 1}`;
+  return `Week ${weekIndex + 1}`;
+}
+
+export function getMonthWeeksStrict(year: number, month: number): string[][] {
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const allDates: string[] = [];
+  for (let d = 1; d <= lastDay; d++) {
+    allDates.push(toISODate(new Date(year, month, d)));
+  }
+
+  const weeks: string[][] = [];
+  for (let i = 0; i < allDates.length; i += 7) {
+    weeks.push(allDates.slice(i, i + 7));
+  }
+  return weeks;
+}
+
+export function getDayAbbrev(date: string): string {
+  return new Date(date).toLocaleDateString("default", { weekday: "short" });
 }

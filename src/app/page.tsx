@@ -1,30 +1,30 @@
 "use client";
 
 import CompletionChart from "@/components/CompletionChart";
-import DayPanel from "@/components/DayPanel";
+import GoalGrid from "@/components/GoalGrid";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import StatsBar from "@/components/StatsBar";
-import { toISODate } from "@/lib/dateUtils";
-import { computeCompletionByDate, generateMockGoals } from "@/lib/mockData";
-import { useGoals } from "@/lib/useGoals";
-import { useMemo, useState } from "react";
+import { getMonthWeeksStrict } from "@/lib/dateUtils";
+import { computeCompletionByDate, generateMockGrid } from "@/lib/mockData";
+import { useGoalGrid } from "@/lib/useGoalGrid";
+import { useMemo } from "react";
 
 export default function Home() {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
 
-  const initialGoals = useMemo(
-    () => generateMockGoals(year, month),
-    [year, month],
+  const initial = useMemo(() => generateMockGrid(year, month), [year, month]);
+  const { templates, completions, isDone, toggle, addTemplate } = useGoalGrid(
+    initial.templates,
+    initial.completions,
   );
-  const { goals, toggleGoal, addGoal } = useGoals(initialGoals);
 
-  const [selectedDate, setSelectedDate] = useState(toISODate(today));
+  const weeks = useMemo(() => getMonthWeeksStrict(year, month), [year, month]);
 
   const completionByDate = useMemo(
-    () => computeCompletionByDate(goals),
-    [goals],
+    () => computeCompletionByDate(templates, completions),
+    [templates, completions],
   );
 
   const completionPct = useMemo(() => {
@@ -41,8 +41,6 @@ export default function Home() {
       .map(([date, ratio]) => ({ date, completion: Math.round(ratio * 100) }));
   }, [completionByDate]);
 
-  const selectedDayGoals = goals.filter((g) => g.date === selectedDate);
-
   return (
     <main className="mx-auto max-w-6xl px-8 py-12">
       <h1 className="font-display text-3xl text-ink">Progress</h1>
@@ -54,26 +52,23 @@ export default function Home() {
         <StatsBar completionPct={completionPct} currentStreak={4} />
       </div>
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]">
-        <div>
-          <div className="mb-8">
-            <CompletionChart data={chartData} />
-          </div>
-          <MonthHeatmap
-            year={year}
-            month={month}
-            completionByDate={completionByDate}
-            onDayClick={setSelectedDate}
-          />
-        </div>
-
-        <DayPanel
-          date={selectedDate}
-          goals={selectedDayGoals}
-          onToggle={toggleGoal}
-          onAdd={(title) => addGoal(selectedDate, title)}
+      <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
+        <CompletionChart data={chartData} />
+        <MonthHeatmap
+          year={year}
+          month={month}
+          completionByDate={completionByDate}
+          onDayClick={() => {}}
         />
       </div>
+
+      <GoalGrid
+        templates={templates}
+        weeks={weeks}
+        isDone={isDone}
+        onToggle={toggle}
+        onAddGoal={addTemplate}
+      />
     </main>
   );
 }

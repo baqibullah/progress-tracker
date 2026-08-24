@@ -1,14 +1,12 @@
-import { toISODate } from "./dateUtils";
-import type { Goal } from "./types";
+import { getMonthWeeksStrict } from "./dateUtils";
+import type { Completion, GoalTemplate } from "./types";
 
 const sampleTitles = [
   "Morning run",
   "Read 20 pages",
   "Ship one PR",
-  "Study linear algebra",
   "No sugar today",
   "Journal",
-  "Practice guitar",
 ];
 
 function mulberry32(seed: number) {
@@ -21,41 +19,44 @@ function mulberry32(seed: number) {
   };
 }
 
-export function generateMockGoals(year: number, month: number): Goal[] {
+export function generateMockGrid(year: number, month: number) {
   const rand = mulberry32(year * 100 + month);
-  const goals: Goal[] = [];
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const templates: GoalTemplate[] = sampleTitles.map((title, i) => ({
+    id: `tpl-${i}`,
+    title,
+  }));
+
+  const weeks = getMonthWeeksStrict(year, month);
   const today = new Date();
+  const completions: Completion[] = [];
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month, d);
-    if (date > today) continue;
-
-    const numGoals = 2 + Math.floor(rand() * 2);
-    for (let i = 0; i < numGoals; i++) {
-      goals.push({
-        id: `${toISODate(date)}-${i}`,
-        date: toISODate(date),
-        title: sampleTitles[Math.floor(rand() * sampleTitles.length)],
-        isCompleted: rand() > 0.35,
-      });
+  for (const week of weeks) {
+    for (const date of week) {
+      if (new Date(date) > today) continue;
+      for (const tpl of templates) {
+        if (rand() > 0.35) {
+          completions.push({ goalId: tpl.id, date, isCompleted: true });
+        }
+      }
     }
   }
 
-  return goals;
+  return { templates, completions };
 }
 
-export function computeCompletionByDate(goals: Goal[]): Record<string, number> {
-  const byDate: Record<string, { done: number; total: number }> = {};
+export function computeCompletionByDate(
+  templates: GoalTemplate[],
+  completions: Completion[],
+) {
+  const total = templates.length;
+  const doneByDate: Record<string, number> = {};
 
-  for (const goal of goals) {
-    if (!byDate[goal.date]) byDate[goal.date] = { done: 0, total: 0 };
-    byDate[goal.date].total += 1;
-    if (goal.isCompleted) byDate[goal.date].done += 1;
+  for (const c of completions) {
+    if (c.isCompleted) doneByDate[c.date] = (doneByDate[c.date] ?? 0) + 1;
   }
 
   const result: Record<string, number> = {};
-  for (const [date, { done, total }] of Object.entries(byDate)) {
+  for (const [date, done] of Object.entries(doneByDate)) {
     result[date] = total > 0 ? done / total : 0;
   }
   return result;
