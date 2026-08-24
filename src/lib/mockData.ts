@@ -11,7 +11,18 @@ const sampleTitles = [
   "Practice guitar",
 ];
 
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 export function generateMockGoals(year: number, month: number): Goal[] {
+  const rand = mulberry32(year * 100 + month);
   const goals: Goal[] = [];
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = new Date();
@@ -20,13 +31,13 @@ export function generateMockGoals(year: number, month: number): Goal[] {
     const date = new Date(year, month, d);
     if (date > today) continue;
 
-    const numGoals = 2 + Math.floor(Math.random() * 2);
+    const numGoals = 2 + Math.floor(rand() * 2);
     for (let i = 0; i < numGoals; i++) {
       goals.push({
         id: `${toISODate(date)}-${i}`,
         date: toISODate(date),
-        title: sampleTitles[Math.floor(Math.random() * sampleTitles.length)],
-        isCompleted: Math.random() > 0.35,
+        title: sampleTitles[Math.floor(rand() * sampleTitles.length)],
+        isCompleted: rand() > 0.35,
       });
     }
   }
