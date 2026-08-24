@@ -17,3 +17,16 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body);
 }
+
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-tick path {
+  animation: tick-draw 0.35s ease-out forwards;
+}
