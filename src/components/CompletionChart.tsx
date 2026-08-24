@@ -20,11 +20,11 @@ export default function CompletionChart({ data }: CompletionChartProps) {
   }));
 
   return (
-    <div className="h-48 w-full">
+    <div className="h-56 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}
-          margin={{ top: 8, right: 8, left: -20, bottom: 0 }}
+          margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
         >
           <XAxis
             dataKey="day"
@@ -37,7 +37,7 @@ export default function CompletionChart({ data }: CompletionChartProps) {
             tick={{ fontSize: 11, fill: "#1C1B19", opacity: 0.4 }}
             axisLine={false}
             tickLine={false}
-            width={32}
+            width={36}
           />
           <Tooltip
             contentStyle={{

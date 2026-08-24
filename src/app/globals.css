@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #F7F5F0;
-  --color-ink: #1C1B19;
-  --color-done: #2D4A3E;
-  --color-streak: #C17A3D;
-  --color-undone: #D9D6CE;
+  --color-paper: #f7f5f0;
+  --color-ink: #1c1b19;
+  --color-done: #2d4a3e;
+  --color-streak: #c17a3d;
+  --color-undone: #d9d6ce;
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
@@ -14,6 +14,12 @@
 
 body {
   background-color: var(--color-paper);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(28, 27, 25, 0.04) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
   color: var(--color-ink);
   font-family: var(--font-body);
 }

@@ -44,7 +44,7 @@ export default function Home() {
   const selectedDayGoals = goals.filter((g) => g.date === selectedDate);
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
+    <main className="mx-auto max-w-6xl px-8 py-12">
       <h1 className="font-display text-3xl text-ink">Progress</h1>
       <p className="mb-8 text-sm text-ink/50">
         {today.toLocaleString("default", { month: "long", year: "numeric" })}
@@ -54,25 +54,26 @@ export default function Home() {
         <StatsBar completionPct={completionPct} currentStreak={4} />
       </div>
 
-      <div className="mb-8">
-        <CompletionChart data={chartData} />
-      </div>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_360px]">
+        <div>
+          <div className="mb-8">
+            <CompletionChart data={chartData} />
+          </div>
+          <MonthHeatmap
+            year={year}
+            month={month}
+            completionByDate={completionByDate}
+            onDayClick={setSelectedDate}
+          />
+        </div>
 
-      <div className="mb-6">
-        <MonthHeatmap
-          year={year}
-          month={month}
-          completionByDate={completionByDate}
-          onDayClick={setSelectedDate}
+        <DayPanel
+          date={selectedDate}
+          goals={selectedDayGoals}
+          onToggle={toggleGoal}
+          onAdd={(title) => addGoal(selectedDate, title)}
         />
       </div>
-
-      <DayPanel
-        date={selectedDate}
-        goals={selectedDayGoals}
-        onToggle={toggleGoal}
-        onAdd={(title) => addGoal(selectedDate, title)}
-      />
     </main>
   );
 }
