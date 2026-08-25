@@ -1,3 +1,5 @@
+import { DAY_CELL_GAP, DAY_CELL_WIDTH } from "@/lib/gridLayout";
+
 interface GoalGridHeaderProps {
   weeks: string[][];
 }
@@ -12,7 +14,7 @@ export default function GoalGridHeader({ weeks }: GoalGridHeaderProps) {
             key={wi}
             className="text-center font-mono text-xs text-ink/40"
             style={{
-              width: `${weekDates.length * 34 + (weekDates.length - 1) * 6}px`,
+              width: `${weekDates.length * DAY_CELL_WIDTH + (weekDates.length - 1) * DAY_CELL_GAP}px`,
             }}
           >
             Week {wi + 1}

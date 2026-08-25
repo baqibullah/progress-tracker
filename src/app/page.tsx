@@ -1,5 +1,6 @@
 import CompletionChart from "@/components/CompletionChart";
 import GoalGridClient from "@/components/GoalGridClient";
+import HeatmapLegend from "@/components/HeatmapLegend";
 import HomeHeader from "@/components/HomeHeader";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import MonthNav from "@/components/MonthNav";
@@ -75,6 +76,7 @@ export default async function Home({
           month={month}
           completionByDate={completionByDate}
         />
+        <HeatmapLegend />
       </div>
 
       <GoalGridClient
