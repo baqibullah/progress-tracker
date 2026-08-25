@@ -11,6 +11,7 @@ interface MonthHeatmapProps {
   year: number;
   month: number;
   completionByDate: Record<string, number>;
+  selectedWeek?: number | null;
   onDaySelect?: (date: string) => void;
 }
 
@@ -19,6 +20,7 @@ export default function MonthHeatmap({
   month,
   completionByDate,
   onDaySelect,
+  selectedWeek,
 }: MonthHeatmapProps) {
   const weeks = getMonthWeeksStrict(year, month);
   const today = toISODate(new Date());
@@ -31,6 +33,7 @@ export default function MonthHeatmap({
           weekLabel={formatWeekLabel(i)}
           todayDate={today}
           onDayClick={onDaySelect}
+          isSelected={i === selectedWeek}
           days={weekDates.map((date) => ({
             date,
             completionRatio: completionByDate[date] ?? 0,

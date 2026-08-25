@@ -44,13 +44,14 @@ export default function DashboardClient({
 
   return (
     <>
-      <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
+      <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_380px]">
         <CompletionChart data={filteredChartData} />
         <MonthHeatmap
           year={year}
           month={month}
           completionByDate={completionByDate}
           onDaySelect={handleDaySelect}
+          selectedWeek={selectedWeek}
         />
       </div>
       {variant === "editable" ? (

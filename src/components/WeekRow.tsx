@@ -9,6 +9,7 @@ interface WeekRowProps {
   days: WeekDay[];
   weekLabel: string;
   todayDate?: string;
+  isSelected?: boolean;
   onDayClick?: (date: string) => void;
 }
 
@@ -17,9 +18,13 @@ export default function WeekRow({
   weekLabel,
   todayDate,
   onDayClick,
+  isSelected,
 }: WeekRowProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="relative flex w-full items-center gap-3 rounded-sm px-1 py-0.5">
+      {isSelected && (
+        <div className="absolute inset-0 -z-10 rounded-sm bg-streak/10" />
+      )}
       <span className="w-16 shrink-0 font-mono text-xs text-ink/40">
         {weekLabel}
       </span>
