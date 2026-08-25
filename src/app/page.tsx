@@ -4,7 +4,7 @@ import HomeHeader from "@/components/HomeHeader";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import StatsBar from "@/components/StatsBar";
 import { getMonthWeeksStrict } from "@/lib/dateUtils";
-import { computeCompletionByDate } from "@/lib/mockData";
+import { computeCompletionByDate } from "@/lib/stats";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
