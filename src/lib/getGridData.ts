@@ -3,7 +3,11 @@ import { computeCompletionByDate, computeCurrentStreak } from "@/lib/stats";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
-export async function getGridData(userId: string) {
+export async function getGridData(
+  userId: string,
+  yearParam?: number,
+  monthParam?: number,
+) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -19,8 +23,8 @@ export async function getGridData(userId: string) {
     .eq("user_id", userId);
 
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const year = yearParam ?? today.getFullYear();
+  const month = monthParam ?? today.getMonth();
   const weeks = getMonthWeeksStrict(year, month);
 
   const mappedCompletions = (completions ?? []).map((c) => ({
@@ -31,9 +35,14 @@ export async function getGridData(userId: string) {
 
   const currentStreak = computeCurrentStreak(mappedCompletions);
 
+  const monthPrefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const monthCompletions = mappedCompletions.filter((c) =>
+    c.date.startsWith(monthPrefix),
+  );
+
   const completionByDate = computeCompletionByDate(
     templates ?? [],
-    mappedCompletions,
+    monthCompletions,
   );
 
   const completionPct =
@@ -51,7 +60,7 @@ export async function getGridData(userId: string) {
 
   return {
     templates: templates ?? [],
-    completions: mappedCompletions,
+    completions: monthCompletions,
     weeks,
     year,
     month,

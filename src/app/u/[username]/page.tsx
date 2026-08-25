@@ -1,6 +1,7 @@
 import CompletionChart from "@/components/CompletionChart";
 import GoalGrid from "@/components/GoalGrid";
 import MonthHeatmap from "@/components/MonthHeatmap";
+import MonthNav from "@/components/MonthNav";
 import StatsBar from "@/components/StatsBar";
 import UserSwitcher from "@/components/UserSwitcher";
 import { getGridData } from "@/lib/getGridData";
@@ -12,10 +13,22 @@ import { notFound, redirect } from "next/navigation";
 
 export default async function UserGridPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ username: string }>;
+  searchParams: Promise<{ month?: string }>;
 }) {
   const { username } = await params;
+  const { month: monthParam } = await searchParams;
+
+  let yearArg: number | undefined;
+  let monthArg: number | undefined;
+
+  if (monthParam && /^\d{4}-\d{2}$/.test(monthParam)) {
+    const [y, m] = monthParam.split("-").map(Number);
+    yearArg = y;
+    monthArg = m - 1;
+  }
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -48,7 +61,7 @@ export default async function UserGridPage({
     completionPct,
     chartData,
     currentStreak,
-  } = await getGridData(profile.id);
+  } = await getGridData(profile.id, yearArg, monthArg);
 
   const profiles = await getAllProfiles();
 
@@ -70,12 +83,7 @@ export default async function UserGridPage({
         </Link>
       </div>
       <h1 className="font-display text-3xl text-ink">Progress</h1>
-      <p className="mb-8 text-sm text-ink/50">
-        {new Date(year, month).toLocaleString("default", {
-          month: "long",
-          year: "numeric",
-        })}
-      </p>
+      <MonthNav year={year} month={month} />
       <div className="mb-8">
         <StatsBar completionPct={completionPct} currentStreak={currentStreak} />
       </div>
