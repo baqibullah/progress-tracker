@@ -1,6 +1,10 @@
 "use client";
 
-import { formatWeekLabel, getMonthWeeks, toISODate } from "@/lib/dateUtils";
+import {
+  formatWeekLabel,
+  getMonthWeeksStrict,
+  toISODate,
+} from "@/lib/dateUtils";
 import WeekRow from "./WeekRow";
 
 interface MonthHeatmapProps {
@@ -16,7 +20,7 @@ export default function MonthHeatmap({
   completionByDate,
   onDaySelect,
 }: MonthHeatmapProps) {
-  const weeks = getMonthWeeks(year, month);
+  const weeks = getMonthWeeksStrict(year, month);
   const today = toISODate(new Date());
 
   return (
@@ -27,12 +31,10 @@ export default function MonthHeatmap({
           weekLabel={formatWeekLabel(i)}
           todayDate={today}
           onDayClick={onDaySelect}
-          days={weekDates
-            .filter((d) => d !== "")
-            .map((date) => ({
-              date,
-              completionRatio: completionByDate[date] ?? 0,
-            }))}
+          days={weekDates.map((date) => ({
+            date,
+            completionRatio: completionByDate[date] ?? 0,
+          }))}
         />
       ))}
     </div>

@@ -1,6 +1,4 @@
-import CompletionChart from "@/components/CompletionChart";
-import GoalGrid from "@/components/GoalGrid";
-import MonthHeatmap from "@/components/MonthHeatmap";
+import DashboardClient from "@/components/DashboardClient";
 import MonthNav from "@/components/MonthNav";
 import StatsBar from "@/components/StatsBar";
 import UserSwitcher from "@/components/UserSwitcher";
@@ -29,6 +27,7 @@ export default async function UserGridPage({
     yearArg = y;
     monthArg = m - 1;
   }
+
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -73,36 +72,34 @@ export default async function UserGridPage({
             Viewing <span className="text-ink">{profile.username}</span>'s
             progress
           </p>
+
           <UserSwitcher
             profiles={profiles}
             currentUsername={viewerProfile?.username ?? profile.username}
           />
         </div>
+
         <Link href="/" className="text-sm text-ink/50 hover:text-ink">
           Back to your grid
         </Link>
       </div>
+
       <h1 className="font-display text-3xl text-ink">Progress</h1>
       <MonthNav year={year} month={month} />
+
       <div className="mb-8">
         <StatsBar completionPct={completionPct} currentStreak={currentStreak} />
       </div>
-      <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
-        <CompletionChart data={chartData} />
-        <MonthHeatmap
-          year={year}
-          month={month}
-          completionByDate={completionByDate}
-        />
-      </div>
-      <GoalGrid
-        templates={templates}
+
+      <DashboardClient
         weeks={weeks}
-        isDone={(goalId, date) =>
-          completions.find((c) => c.goalId === goalId && c.date === date)
-            ?.isCompleted ?? false
-        }
-        readOnly
+        year={year}
+        month={month}
+        completionByDate={completionByDate}
+        chartData={chartData}
+        templates={templates}
+        completions={completions}
+        variant="readonly"
       />
     </main>
   );
