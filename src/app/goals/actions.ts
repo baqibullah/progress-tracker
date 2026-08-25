@@ -58,3 +58,28 @@ export async function addGoalTemplate(title: string) {
   revalidatePath("/");
   return data;
 }
+
+export async function deleteGoalTemplate(goalTemplateId: string) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // Delete completions first (explicit, in case DB has no ON DELETE CASCADE)
+  await supabase
+    .from("completions")
+    .delete()
+    .eq("goal_template_id", goalTemplateId)
+    .eq("user_id", user.id);
+
+  const { error } = await supabase
+    .from("goal_templates")
+    .delete()
+    .eq("id", goalTemplateId)
+    .eq("user_id", user.id);
+  if (error) throw error;
+
+  revalidatePath("/");
+}

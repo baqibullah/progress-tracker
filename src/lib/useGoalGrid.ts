@@ -43,6 +43,11 @@ export function useGoalGrid(
     [],
   );
 
+  const deleteTemplate = useCallback((goalId: string) => {
+    setTemplates((prev) => prev.filter((t) => t.id !== goalId));
+    setCompletions((prev) => prev.filter((c) => c.goalId !== goalId));
+  }, []);
+
   return {
     templates,
     completions,
@@ -50,5 +55,6 @@ export function useGoalGrid(
     toggle,
     addTemplate,
     replaceTemplateId,
+    deleteTemplate,
   };
 }

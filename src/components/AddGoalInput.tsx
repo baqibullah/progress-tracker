@@ -23,7 +23,7 @@ export default function AddGoalInput({ onAdd }: AddGoalInputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Add a goal for today..."
-        className="flex-1 rounded-sm border border-undone bg-transparent px-3 py-1.5 text-sm text-ink placeholder:text-ink/30 focus:outline-none focus:border-done"
+        className="flex-1 rounded-sm border border-undone bg-transparent px-3 py-1.5 text-sm text-ink placeholder:text-ink/50 focus:outline-none focus:border-done"
       />
       <button
         type="submit"
