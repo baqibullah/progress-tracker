@@ -7,8 +7,9 @@ interface GoalGridProps {
   templates: GoalTemplate[];
   weeks: string[][];
   isDone: (goalId: string, date: string) => boolean;
-  onToggle: (goalId: string, date: string) => void;
-  onAddGoal: (title: string) => void;
+  onToggle?: (goalId: string, date: string) => void;
+  onAddGoal?: (title: string) => void;
+  readOnly?: boolean;
 }
 
 export default function GoalGrid({
@@ -17,6 +18,7 @@ export default function GoalGrid({
   isDone,
   onToggle,
   onAddGoal,
+  readOnly,
 }: GoalGridProps) {
   return (
     <div className="overflow-x-auto">
@@ -28,12 +30,16 @@ export default function GoalGrid({
             title={goal.title}
             weeks={weeks}
             isDone={(date) => isDone(goal.id, date)}
-            onToggle={(date) => onToggle(goal.id, date)}
+            onToggle={(date) => onToggle?.(goal.id, date)}
+            readOnly={readOnly}
           />
         ))}
-        <div className="max-w-xs pt-3">
-          <AddGoalInput onAdd={onAddGoal} />
-        </div>
+
+        {!readOnly && onAddGoal && (
+          <div className="max-w-xs pt-3">
+            <AddGoalInput onAdd={onAddGoal} />
+          </div>
+        )}
       </div>
     </div>
   );

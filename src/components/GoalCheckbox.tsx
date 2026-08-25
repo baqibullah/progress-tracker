@@ -1,21 +1,23 @@
 "use client";
-
 import { useState } from "react";
 
 interface GoalCheckboxProps {
   checked: boolean;
   onToggle: () => void;
   label?: string;
+  disabled?: boolean;
 }
 
 export default function GoalCheckbox({
   checked,
   onToggle,
   label,
+  disabled,
 }: GoalCheckboxProps) {
   const [justChecked, setJustChecked] = useState(false);
 
   function handleClick() {
+    if (disabled) return;
     if (!checked) {
       setJustChecked(true);
       setTimeout(() => setJustChecked(false), 400);
@@ -27,13 +29,14 @@ export default function GoalCheckbox({
     <button
       type="button"
       onClick={handleClick}
+      disabled={disabled}
       aria-pressed={checked}
       aria-label={label ?? (checked ? "Mark as not done" : "Mark as done")}
       className={`relative h-6 w-6 shrink-0 rounded-sm border-2 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-done ${
         checked
           ? "border-done bg-done/10"
           : "border-undone bg-transparent hover:border-ink/40"
-      }`}
+      } ${disabled ? "cursor-default hover:border-undone" : "cursor-pointer"}`}
     >
       {checked && (
         <svg

@@ -6,6 +6,7 @@ interface GoalGridRowProps {
   weeks: string[][];
   isDone: (date: string) => boolean;
   onToggle: (date: string) => void;
+  readOnly?: boolean;
 }
 
 export default function GoalGridRow({
@@ -13,6 +14,7 @@ export default function GoalGridRow({
   weeks,
   isDone,
   onToggle,
+  readOnly,
 }: GoalGridRowProps) {
   return (
     <div className="flex items-center border-b border-undone/50 py-2">
@@ -31,6 +33,7 @@ export default function GoalGridRow({
                   checked={isDone(date)}
                   onToggle={() => onToggle(date)}
                   label={`${title} - ${date}`}
+                  disabled={readOnly}
                 />
               </div>
             ))}
