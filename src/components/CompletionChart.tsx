@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { fromISODate } from "@/lib/dateUtils";
 
 interface CompletionChartProps {
   data: { date: string; completion: number }[];
@@ -15,7 +16,7 @@ interface CompletionChartProps {
 
 export default function CompletionChart({ data }: CompletionChartProps) {
   const chartData = data.map((d) => ({
-    day: new Date(d.date).getDate(),
+    day: fromISODate(d.date).getDate(),
     completion: d.completion,
   }));
 

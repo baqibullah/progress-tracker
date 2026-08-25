@@ -1,3 +1,5 @@
+import { fromISODate } from "@/lib/dateUtils";
+
 interface DayCellProps {
   date: string;
   completionRatio: number;
@@ -11,7 +13,7 @@ export default function DayCell({
   isToday,
   onClick,
 }: DayCellProps) {
-  const day = new Date(date).getDate();
+  const day = fromISODate(date).getDate();
 
   const fillClass =
     completionRatio === 0

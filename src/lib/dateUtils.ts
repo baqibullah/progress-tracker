@@ -29,7 +29,15 @@ export function getMonthWeeks(year: number, month: number): string[][] {
 }
 
 export function toISODate(date: Date): string {
-  return date.toISOString().split("T")[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export function fromISODate(iso: string): Date {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d); // local midnight, not UTC
 }
 
 export function formatWeekLabel(weekIndex: number): string {
@@ -51,5 +59,5 @@ export function getMonthWeeksStrict(year: number, month: number): string[][] {
 }
 
 export function getDayAbbrev(date: string): string {
-  return new Date(date).toLocaleDateString("default", { weekday: "short" });
+  return fromISODate(date).toLocaleDateString("default", { weekday: "short" });
 }
