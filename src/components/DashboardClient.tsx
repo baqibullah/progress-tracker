@@ -6,6 +6,7 @@ import GoalGrid from "./GoalGrid";
 import GoalGridClient from "./GoalGridClient";
 import MonthHeatmap from "./MonthHeatmap";
 import type { Completion, GoalTemplate } from "@/lib/types";
+import HeatmapLegend from "./HeatmapLegend";
 
 interface DashboardClientProps {
   weeks: string[][];
@@ -53,6 +54,7 @@ export default function DashboardClient({
           onDaySelect={handleDaySelect}
           selectedWeek={selectedWeek}
         />
+        <HeatmapLegend />
       </div>
       {variant === "editable" ? (
         <GoalGridClient
