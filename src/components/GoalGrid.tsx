@@ -1,3 +1,5 @@
+"use client";
+
 import type { GoalTemplate } from "@/lib/types";
 import AddGoalInput from "./AddGoalInput";
 import GoalGridHeader from "./GoalGridHeader";
@@ -10,6 +12,7 @@ interface GoalGridProps {
   onToggle?: (goalId: string, date: string) => void;
   onAddGoal?: (title: string) => void;
   readOnly?: boolean;
+  highlightedWeek?: number | null;
 }
 
 export default function GoalGrid({
@@ -19,6 +22,7 @@ export default function GoalGrid({
   onToggle,
   onAddGoal,
   readOnly,
+  highlightedWeek,
 }: GoalGridProps) {
   return (
     <div className="overflow-x-auto">
@@ -32,6 +36,7 @@ export default function GoalGrid({
             isDone={(date) => isDone(goal.id, date)}
             onToggle={(date) => onToggle?.(goal.id, date)}
             readOnly={readOnly}
+            highlightedWeek={highlightedWeek}
           />
         ))}
 

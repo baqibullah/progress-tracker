@@ -1,3 +1,5 @@
+"use client";
+
 import { fromISODate, getDayAbbrev } from "@/lib/dateUtils";
 import GoalCheckbox from "./GoalCheckbox";
 
@@ -7,6 +9,7 @@ interface GoalGridRowProps {
   isDone: (date: string) => boolean;
   onToggle: (date: string) => void;
   readOnly?: boolean;
+  highlightedWeek?: number | null;
 }
 
 export default function GoalGridRow({
@@ -15,6 +18,7 @@ export default function GoalGridRow({
   isDone,
   onToggle,
   readOnly,
+  highlightedWeek,
 }: GoalGridRowProps) {
   return (
     <div className="flex items-center border-b border-undone/50 py-2">
@@ -23,7 +27,12 @@ export default function GoalGridRow({
       </div>
       <div className="flex gap-6">
         {weeks.map((weekDates, wi) => (
-          <div key={wi} className="flex gap-1.5">
+          <div
+            key={wi}
+            className={`flex gap-1.5 rounded-sm transition-colors ${
+              wi === highlightedWeek ? "bg-streak/10" : ""
+            }`}
+          >
             {weekDates.map((date) => (
               <div key={date} className="flex flex-col items-center gap-1">
                 <span className="font-mono text-[10px] text-ink/30">

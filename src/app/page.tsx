@@ -1,8 +1,5 @@
-import CompletionChart from "@/components/CompletionChart";
-import GoalGridClient from "@/components/GoalGridClient";
-import HeatmapLegend from "@/components/HeatmapLegend";
+import DashboardClient from "@/components/DashboardClient";
 import HomeHeader from "@/components/HomeHeader";
-import MonthHeatmap from "@/components/MonthHeatmap";
 import MonthNav from "@/components/MonthNav";
 import StatsBar from "@/components/StatsBar";
 import { getGridData } from "@/lib/getGridData";
@@ -68,21 +65,15 @@ export default async function Home({
       <div className="mb-8">
         <StatsBar completionPct={completionPct} currentStreak={currentStreak} />
       </div>
-
-      <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
-        <CompletionChart data={chartData} />
-        <MonthHeatmap
-          year={year}
-          month={month}
-          completionByDate={completionByDate}
-        />
-        <HeatmapLegend />
-      </div>
-
-      <GoalGridClient
+      <DashboardClient
         weeks={weeks}
-        initialTemplates={templates}
-        initialCompletions={completions}
+        year={year}
+        month={month}
+        completionByDate={completionByDate}
+        chartData={chartData}
+        templates={templates}
+        completions={completions}
+        variant="editable"
       />
     </main>
   );

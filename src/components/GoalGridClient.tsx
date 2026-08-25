@@ -9,17 +9,19 @@ export default function GoalGridClient({
   initialTemplates,
   initialCompletions,
   weeks,
+  highlightedWeek,
 }: {
   initialTemplates: GoalTemplate[];
   initialCompletions: Completion[];
   weeks: string[][];
+  highlightedWeek?: number | null;
 }) {
   const { templates, isDone, toggle, addTemplate, replaceTemplateId } =
     useGoalGrid(initialTemplates, initialCompletions);
 
   async function handleToggle(goalId: string, date: string) {
-    toggle(goalId, date); // optimistic UI update
-    await toggleCompletion(goalId, date); // persist
+    toggle(goalId, date);
+    await toggleCompletion(goalId, date);
   }
 
   async function handleAdd(title: string) {
@@ -36,6 +38,7 @@ export default function GoalGridClient({
       isDone={isDone}
       onToggle={handleToggle}
       onAddGoal={handleAdd}
+      highlightedWeek={highlightedWeek}
     />
   );
 }

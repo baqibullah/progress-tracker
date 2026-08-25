@@ -7,14 +7,14 @@ interface MonthHeatmapProps {
   year: number;
   month: number;
   completionByDate: Record<string, number>;
-  onDayClick?: (date: string) => void;
+  onDaySelect?: (date: string) => void;
 }
 
 export default function MonthHeatmap({
   year,
   month,
   completionByDate,
-  onDayClick,
+  onDaySelect,
 }: MonthHeatmapProps) {
   const weeks = getMonthWeeks(year, month);
   const today = toISODate(new Date());
@@ -26,7 +26,7 @@ export default function MonthHeatmap({
           key={i}
           weekLabel={formatWeekLabel(i)}
           todayDate={today}
-          onDayClick={onDayClick}
+          onDayClick={onDaySelect}
           days={weekDates
             .filter((d) => d !== "")
             .map((date) => ({
