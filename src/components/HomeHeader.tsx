@@ -22,7 +22,10 @@ export default function HomeHeader({
         <UserSwitcher profiles={profiles} currentUsername={username} />
       </div>
       <form action={logout}>
-        <button type="submit" className="text-sm text-ink/50 hover:text-ink">
+        <button
+          type="submit"
+          className="cursor-pointer rounded-sm border border-undone px-3 py-1.5 text-sm text-ink/85 transition-colors hover:border-ink/40 hover:text-ink"
+        >
           Log out
         </button>
       </form>

@@ -23,10 +23,10 @@ export default function MonthNav({
   });
 
   return (
-    <div className="mb-8 flex items-center gap-3 text-sm text-ink/50">
+    <div className="mb-8 flex items-center gap-3 text-ink/50">
       <button
         onClick={() => go(-1)}
-        className="hover:text-ink"
+        className="hover:text-ink cursor-pointer"
         aria-label="Previous month"
       >
         &larr;
@@ -34,7 +34,7 @@ export default function MonthNav({
       <span>{label}</span>
       <button
         onClick={() => go(1)}
-        className="hover:text-ink"
+        className="hover:text-ink cursor-pointer"
         aria-label="Next month"
       >
         &rarr;
