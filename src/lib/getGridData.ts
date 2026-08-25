@@ -1,5 +1,5 @@
 import { getMonthWeeksStrict } from "@/lib/dateUtils";
-import { computeCompletionByDate } from "@/lib/stats";
+import { computeCompletionByDate, computeCurrentStreak } from "@/lib/stats";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
@@ -29,6 +29,8 @@ export async function getGridData(userId: string) {
     isCompleted: c.is_completed,
   }));
 
+  const currentStreak = computeCurrentStreak(mappedCompletions);
+
   const completionByDate = computeCompletionByDate(
     templates ?? [],
     mappedCompletions,
@@ -56,5 +58,6 @@ export async function getGridData(userId: string) {
     completionByDate,
     completionPct,
     chartData,
+    currentStreak,
   };
 }

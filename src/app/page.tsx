@@ -4,6 +4,7 @@ import HomeHeader from "@/components/HomeHeader";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import StatsBar from "@/components/StatsBar";
 import { getGridData } from "@/lib/getGridData";
+import { getAllProfiles } from "@/lib/profiles";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -32,11 +33,17 @@ export default async function Home() {
     completionByDate,
     completionPct,
     chartData,
+    currentStreak,
   } = await getGridData(user.id);
+
+  const profiles = await getAllProfiles();
 
   return (
     <main className="mx-auto max-w-6xl px-8 py-12">
-      <HomeHeader username={profile?.username ?? "Unknown"} />
+      <HomeHeader
+        username={profile?.username ?? "Unknown"}
+        profiles={profiles}
+      />
 
       <h1 className="font-display text-3xl text-ink">Progress</h1>
       <p className="mb-8 text-sm text-ink/50">
@@ -47,7 +54,7 @@ export default async function Home() {
       </p>
 
       <div className="mb-8">
-        <StatsBar completionPct={completionPct} currentStreak={0} />
+        <StatsBar completionPct={completionPct} currentStreak={currentStreak} />
       </div>
 
       <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
