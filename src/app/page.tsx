@@ -83,7 +83,6 @@ export default async function Home() {
           year={year}
           month={month}
           completionByDate={completionByDate}
-          onDayClick={() => {}}
         />
       </div>
 
