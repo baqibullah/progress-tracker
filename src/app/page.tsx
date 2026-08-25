@@ -1,55 +1,80 @@
-"use client";
-
 import CompletionChart from "@/components/CompletionChart";
-import GoalGrid from "@/components/GoalGrid";
+import GoalGridClient from "@/components/GoalGridClient";
+import HomeHeader from "@/components/HomeHeader";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import StatsBar from "@/components/StatsBar";
 import { getMonthWeeksStrict } from "@/lib/dateUtils";
-import { computeCompletionByDate, generateMockGrid } from "@/lib/mockData";
-import { useGoalGrid } from "@/lib/useGoalGrid";
-import { useMemo } from "react";
+import { computeCompletionByDate } from "@/lib/mockData";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", user.id)
+    .single();
+
+  const { data: templates } = await supabase
+    .from("goal_templates")
+    .select("id, title")
+    .eq("user_id", user.id)
+    .order("created_at");
+
+  const { data: completions } = await supabase
+    .from("completions")
+    .select("goal_template_id, date, is_completed")
+    .eq("user_id", user.id);
+
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
+  const weeks = getMonthWeeksStrict(year, month);
 
-  const initial = useMemo(() => generateMockGrid(year, month), [year, month]);
-  const { templates, completions, isDone, toggle, addTemplate } = useGoalGrid(
-    initial.templates,
-    initial.completions,
+  const mappedCompletions = (completions ?? []).map((c) => ({
+    goalId: c.goal_template_id,
+    date: c.date,
+    isCompleted: c.is_completed,
+  }));
+
+  const completionByDate = computeCompletionByDate(
+    templates ?? [],
+    mappedCompletions,
   );
 
-  const weeks = useMemo(() => getMonthWeeksStrict(year, month), [year, month]);
+  const completionPct =
+    Object.values(completionByDate).length > 0
+      ? Math.round(
+          (Object.values(completionByDate).reduce((a, b) => a + b, 0) /
+            Object.values(completionByDate).length) *
+            100,
+        )
+      : 0;
 
-  const completionByDate = useMemo(
-    () => computeCompletionByDate(templates, completions),
-    [templates, completions],
-  );
-
-  const completionPct = useMemo(() => {
-    const ratios = Object.values(completionByDate);
-    if (ratios.length === 0) return 0;
-    return Math.round(
-      (ratios.reduce((a, b) => a + b, 0) / ratios.length) * 100,
-    );
-  }, [completionByDate]);
-
-  const chartData = useMemo(() => {
-    return Object.entries(completionByDate)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([date, ratio]) => ({ date, completion: Math.round(ratio * 100) }));
-  }, [completionByDate]);
+  const chartData = Object.entries(completionByDate)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, ratio]) => ({ date, completion: Math.round(ratio * 100) }));
 
   return (
     <main className="mx-auto max-w-6xl px-8 py-12">
+      <HomeHeader username={profile?.username ?? "Unknown"} />
+
       <h1 className="font-display text-3xl text-ink">Progress</h1>
       <p className="mb-8 text-sm text-ink/50">
         {today.toLocaleString("default", { month: "long", year: "numeric" })}
       </p>
 
       <div className="mb-8">
-        <StatsBar completionPct={completionPct} currentStreak={4} />
+        <StatsBar completionPct={completionPct} currentStreak={0} />
       </div>
 
       <div className="mb-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
@@ -62,12 +87,10 @@ export default function Home() {
         />
       </div>
 
-      <GoalGrid
-        templates={templates}
+      <GoalGridClient
+        initialTemplates={templates ?? []}
+        initialCompletions={mappedCompletions}
         weeks={weeks}
-        isDone={isDone}
-        onToggle={toggle}
-        onAddGoal={addTemplate}
       />
     </main>
   );

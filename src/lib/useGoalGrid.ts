@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import type { GoalTemplate, Completion } from "./types";
+import { useCallback, useState } from "react";
+import type { Completion, GoalTemplate } from "./types";
 
 export function useGoalGrid(
   initialTemplates: GoalTemplate[],
@@ -32,9 +32,23 @@ export function useGoalGrid(
     });
   }, []);
 
-  const addTemplate = useCallback((title: string) => {
-    setTemplates((prev) => [...prev, { id: crypto.randomUUID(), title }]);
+  const addTemplate = useCallback((title: string, id?: string) => {
+    setTemplates((prev) => [...prev, { id: id ?? crypto.randomUUID(), title }]);
   }, []);
 
-  return { templates, completions, isDone, toggle, addTemplate };
+  const replaceTemplateId = useCallback(
+    (tempId: string, real: GoalTemplate) => {
+      setTemplates((prev) => prev.map((t) => (t.id === tempId ? real : t)));
+    },
+    [],
+  );
+
+  return {
+    templates,
+    completions,
+    isDone,
+    toggle,
+    addTemplate,
+    replaceTemplateId,
+  };
 }
