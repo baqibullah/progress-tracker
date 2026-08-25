@@ -3,8 +3,7 @@ import GoalGridClient from "@/components/GoalGridClient";
 import HomeHeader from "@/components/HomeHeader";
 import MonthHeatmap from "@/components/MonthHeatmap";
 import StatsBar from "@/components/StatsBar";
-import { getMonthWeeksStrict } from "@/lib/dateUtils";
-import { computeCompletionByDate } from "@/lib/stats";
+import { getGridData } from "@/lib/getGridData";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -24,45 +23,16 @@ export default async function Home() {
     .eq("id", user.id)
     .single();
 
-  const { data: templates } = await supabase
-    .from("goal_templates")
-    .select("id, title")
-    .eq("user_id", user.id)
-    .order("created_at");
-
-  const { data: completions } = await supabase
-    .from("completions")
-    .select("goal_template_id, date, is_completed")
-    .eq("user_id", user.id);
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const weeks = getMonthWeeksStrict(year, month);
-
-  const mappedCompletions = (completions ?? []).map((c) => ({
-    goalId: c.goal_template_id,
-    date: c.date,
-    isCompleted: c.is_completed,
-  }));
-
-  const completionByDate = computeCompletionByDate(
-    templates ?? [],
-    mappedCompletions,
-  );
-
-  const completionPct =
-    Object.values(completionByDate).length > 0
-      ? Math.round(
-          (Object.values(completionByDate).reduce((a, b) => a + b, 0) /
-            Object.values(completionByDate).length) *
-            100,
-        )
-      : 0;
-
-  const chartData = Object.entries(completionByDate)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, ratio]) => ({ date, completion: Math.round(ratio * 100) }));
+  const {
+    templates,
+    completions,
+    weeks,
+    year,
+    month,
+    completionByDate,
+    completionPct,
+    chartData,
+  } = await getGridData(user.id);
 
   return (
     <main className="mx-auto max-w-6xl px-8 py-12">
@@ -70,7 +40,10 @@ export default async function Home() {
 
       <h1 className="font-display text-3xl text-ink">Progress</h1>
       <p className="mb-8 text-sm text-ink/50">
-        {today.toLocaleString("default", { month: "long", year: "numeric" })}
+        {new Date(year, month).toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        })}
       </p>
 
       <div className="mb-8">
@@ -87,9 +60,9 @@ export default async function Home() {
       </div>
 
       <GoalGridClient
-        initialTemplates={templates ?? []}
-        initialCompletions={mappedCompletions}
         weeks={weeks}
+        initialTemplates={templates}
+        initialCompletions={completions}
       />
     </main>
   );
