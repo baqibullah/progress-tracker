@@ -13,9 +13,9 @@ export async function getGridData(
 
   const { data: templates } = await supabase
     .from("goal_templates")
-    .select("id, title")
+    .select("id, title, position")
     .eq("user_id", userId)
-    .order("created_at");
+    .order("position");
 
   const { data: completions } = await supabase
     .from("completions")

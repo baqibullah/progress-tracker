@@ -33,7 +33,26 @@ export function useGoalGrid(
   }, []);
 
   const addTemplate = useCallback((title: string, id?: string) => {
-    setTemplates((prev) => [...prev, { id: id ?? crypto.randomUUID(), title }]);
+    setTemplates((prev) => [
+      ...prev,
+      { id: id ?? crypto.randomUUID(), title, position: prev.length },
+    ]);
+  }, []);
+
+  const editTemplate = useCallback((goalId: string, title: string) => {
+    setTemplates((prev) =>
+      prev.map((t) => (t.id === goalId ? { ...t, title } : t)),
+    );
+  }, []);
+
+  const reorderTemplates = useCallback((orderedIds: string[]) => {
+    setTemplates((prev) => {
+      const byId = new Map(prev.map((t) => [t.id, t]));
+      return orderedIds.map((id, index) => ({
+        ...byId.get(id)!,
+        position: index,
+      }));
+    });
   }, []);
 
   const replaceTemplateId = useCallback(
@@ -56,5 +75,7 @@ export function useGoalGrid(
     addTemplate,
     replaceTemplateId,
     deleteTemplate,
+    editTemplate,
+    reorderTemplates,
   };
 }

@@ -9,6 +9,7 @@ export interface Goal {
 export interface GoalTemplate {
   id: string;
   title: string;
+  position: number;
 }
 
 export interface Completion {

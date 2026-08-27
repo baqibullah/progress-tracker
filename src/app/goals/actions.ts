@@ -49,9 +49,20 @@ export async function addGoalTemplate(title: string) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
+
+  // Place new goal after the current highest position for this user
+  const { data: maxRow } = await supabase
+    .from("goal_templates")
+    .select("position")
+    .eq("user_id", user.id)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextPosition = (maxRow?.position ?? -1) + 1;
+
   const { data, error } = await supabase
     .from("goal_templates")
-    .insert({ user_id: user.id, title })
+    .insert({ user_id: user.id, title, position: nextPosition })
     .select("id, title")
     .single();
   if (error) throw error;
@@ -65,6 +76,7 @@ export async function deleteGoalTemplate(goalTemplateId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) throw new Error("Not authenticated");
 
   // Delete completions first (explicit, in case DB has no ON DELETE CASCADE)
@@ -80,6 +92,58 @@ export async function deleteGoalTemplate(goalTemplateId: string) {
     .eq("id", goalTemplateId)
     .eq("user_id", user.id);
   if (error) throw error;
+  revalidatePath("/");
+}
+
+export async function updateGoalTemplate(
+  goalTemplateId: string,
+  title: string,
+) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("goal_templates")
+    .update({ title })
+    .eq("id", goalTemplateId)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+
+  revalidatePath("/");
+}
+
+export async function reorderGoalTemplates(
+  updates: { id: string; position: number }[],
+) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Not authenticated");
+
+  // Run all position updates in parallel, each scoped to this user
+  const results = await Promise.all(
+    updates.map(({ id, position }) =>
+      supabase
+        .from("goal_templates")
+        .update({ position })
+        .eq("id", id)
+        .eq("user_id", user.id),
+    ),
+  );
+
+  const failed = results.find((r) => r.error);
+
+  if (failed?.error) throw failed.error;
 
   revalidatePath("/");
 }
