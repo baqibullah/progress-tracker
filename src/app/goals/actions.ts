@@ -63,8 +63,9 @@ export async function addGoalTemplate(title: string) {
   const { data, error } = await supabase
     .from("goal_templates")
     .insert({ user_id: user.id, title, position: nextPosition })
-    .select("id, title")
+    .select("id, title, position")
     .single();
+
   if (error) throw error;
   revalidatePath("/");
   return data;

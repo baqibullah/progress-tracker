@@ -2,8 +2,10 @@
 
 import {
   addGoalTemplate,
-  toggleCompletion,
   deleteGoalTemplate,
+  reorderGoalTemplates,
+  toggleCompletion,
+  updateGoalTemplate,
 } from "@/app/goals/actions";
 import type { Completion, GoalTemplate } from "@/lib/types";
 import { useGoalGrid } from "@/lib/useGoalGrid";
@@ -27,6 +29,8 @@ export default function GoalGridClient({
     addTemplate,
     replaceTemplateId,
     deleteTemplate,
+    editTemplate,
+    reorderTemplates,
   } = useGoalGrid(initialTemplates, initialCompletions);
 
   async function handleToggle(goalId: string, date: string) {
@@ -46,6 +50,17 @@ export default function GoalGridClient({
     await deleteGoalTemplate(goalId);
   }
 
+  async function handleEdit(goalId: string, title: string) {
+    editTemplate(goalId, title);
+    await updateGoalTemplate(goalId, title);
+  }
+  async function handleReorder(orderedIds: string[]) {
+    reorderTemplates(orderedIds);
+    await reorderGoalTemplates(
+      orderedIds.map((id, i) => ({ id, position: i })),
+    );
+  }
+
   return (
     <GoalGrid
       templates={templates}
@@ -54,6 +69,8 @@ export default function GoalGridClient({
       onToggle={handleToggle}
       onAddGoal={handleAdd}
       onDeleteGoal={handleDelete}
+      onEditGoal={handleEdit}
+      onReorderGoals={handleReorder}
       highlightedWeek={highlightedWeek}
     />
   );
