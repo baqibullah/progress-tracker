@@ -2,7 +2,30 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { login, signup } from "./actions";
+
+function SubmitButton({ mode }: { mode: "signin" | "signup" }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="mt-2 rounded-sm bg-ink px-3 py-2 text-sm text-paper hover:bg-ink/80 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+    >
+      {pending && (
+        <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-paper/40 border-t-paper" />
+      )}
+      {pending
+        ? mode === "signin"
+          ? "Signing in..."
+          : "Creating account..."
+        : mode === "signin"
+          ? "Sign in"
+          : "Sign up"}
+    </button>
+  );
+}
 
 export default function LoginForm() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -52,12 +75,7 @@ export default function LoginForm() {
             minLength={6}
             className="rounded-sm border border-undone bg-transparent px-3 py-2 text-sm text-ink placeholder:text-ink/30 focus:outline-none focus:border-done"
           />
-          <button
-            type="submit"
-            className="mt-2 rounded-sm bg-ink px-3 py-2 text-sm text-paper hover:bg-ink/80"
-          >
-            {mode === "signin" ? "Sign in" : "Sign up"}
-          </button>
+          <SubmitButton mode={mode} />
         </form>
         <button
           type="button"

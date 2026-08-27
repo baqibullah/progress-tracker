@@ -1,4 +1,4 @@
-import { logout } from "@/app/login/actions";
+import LogoutButton from "./LogoutButton";
 import UserSwitcher from "./UserSwitcher";
 
 interface Profile {
@@ -21,14 +21,7 @@ export default function HomeHeader({
         </p>
         <UserSwitcher profiles={profiles} currentUsername={username} />
       </div>
-      <form action={logout}>
-        <button
-          type="submit"
-          className="cursor-pointer rounded-sm border border-undone px-3 py-1.5 text-sm text-ink/85 transition-colors hover:border-ink/40 hover:text-ink"
-        >
-          Log out
-        </button>
-      </form>
+      <LogoutButton />
     </div>
   );
 }
