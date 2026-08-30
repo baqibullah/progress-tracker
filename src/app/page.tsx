@@ -53,7 +53,7 @@ export default async function Home({
   const profiles = await getAllProfiles();
 
   return (
-    <main className="mx-auto max-w-6xl px-8 py-12">
+    <main className="mx-auto max-w-[1600px] px-8 py-12">
       <HomeHeader
         username={profile?.username ?? "Unknown"}
         profiles={profiles}

@@ -54,9 +54,9 @@ export default function GoalGridRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="group flex items-center border-b border-undone/50 py-2"
+      className="group flex items-start border-b border-undone/50 py-2"
     >
-      <div className="flex w-40 shrink-0 items-start gap-1.5 pr-4">
+      <div className="flex w-56 shrink-0 items-start gap-1.5 pr-4">
         {!readOnly && (
           <button
             type="button"
@@ -70,7 +70,12 @@ export default function GoalGridRow({
         )}
 
         <div className="min-w-0 flex-1">
-          <div className="truncate font-body text-sm text-ink">{title}</div>
+          <div
+            title={title}
+            className="line-clamp-2 font-body text-sm leading-tight text-ink"
+          >
+            {title}
+          </div>
           {!readOnly && (
             <div className="mt-0.5 flex gap-2">
               {onEdit && (
