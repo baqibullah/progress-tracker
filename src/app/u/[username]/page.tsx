@@ -65,7 +65,7 @@ export default async function UserGridPage({
   const profiles = await getAllProfiles();
 
   return (
-    <main className="mx-auto max-w-6xl px-8 py-12">
+    <main className="mx-auto max-w-[1600px] px-8 py-12">
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <p className="text-sm text-ink/50">
